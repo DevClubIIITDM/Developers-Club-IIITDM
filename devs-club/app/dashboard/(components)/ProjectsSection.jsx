@@ -5,11 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Dialog, DialogContent } from "../../../components/ui/dialog";
-import { Calendar, Github, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import {
+  Calendar,
+  Github,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
 import { Card, CardContent } from "../../../components/ui/card";
 import useEmblaCarousel from "embla-carousel-react";
 import { toast } from "react-hot-toast";
-import  Loader  from "../../(components)/Loader.jsx";
+import Loader from "../../(components)/Loader.jsx";
 import EmptyState from "../../(components)/EmptyState";
 
 const statusColors = {
@@ -34,28 +40,38 @@ const statusColors = {
 //   </div>
 // );
 
-
-
 export default function ProjectsSection() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: "start" });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+  });
 
-  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollPrev = useCallback(
+    () => emblaApi && emblaApi.scrollPrev(),
+    [emblaApi],
+  );
+  const scrollNext = useCallback(
+    () => emblaApi && emblaApi.scrollNext(),
+    [emblaApi],
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch("/api/projects");
         const result = await response.json();
-        
+
         if (result.success) {
           const updatedProjects = result.data.map((project) => ({
             ...project,
-            status: !project.status || project.status.trim() === "" ? "completed" : project.status,
+            status:
+              !project.status || project.status.trim() === ""
+                ? "completed"
+                : project.status,
           }));
           setProjects(updatedProjects);
         } else {
@@ -70,12 +86,13 @@ export default function ProjectsSection() {
         setLoading(false);
       }
     };
-  
+
     fetchProjects();
   }, []);
 
   if (loading) return <Loader />;
-  if (error) return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
+  if (error)
+    return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
 
   if (!projects || projects.length === 0) {
     return (
@@ -100,15 +117,16 @@ export default function ProjectsSection() {
     >
       <div className="max-w-9xl mx-auto mb-10">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          <span className="bg-clip-text ">
-            Projects
-          </span>
+          <span className="bg-clip-text ">Projects</span>
         </h2>
         <div className="relative">
           <div className="overflow-hidden items-center" ref={emblaRef}>
             <div className="flex px-2 mb-5">
               {projects.map((project, index) => (
-                <div key={project.id} className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.33%] px-4 ">
+                <div
+                  key={project.id}
+                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.33%] px-4 "
+                >
                   <motion.div
                     whileHover={{ scale: 1.03, rotateY: 5 }}
                     whileTap={{ scale: 0.98 }}
@@ -120,7 +138,9 @@ export default function ProjectsSection() {
                     <Card className="cursor-pointer bg-white hover:shadow-xl transition-all duration-300 h-full overflow-hidden group">
                       <CardContent className="p-6 flex flex-col justify-between h-full relative">
                         <div>
-                          <div className={`${statusColors[project.status]} text-white mb-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold`}>
+                          <div
+                            className={`${statusColors[project.status]} text-white mb-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold`}
+                          >
                             {project.status}
                           </div>
                           <h3 className="text-2xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-200">
@@ -132,7 +152,16 @@ export default function ProjectsSection() {
                         </div>
                         <div className="flex items-center text-sm text-gray-500 mt-4">
                           <Calendar className="w-4 h-4 mr-2 text-blue-500" />
-                          <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+                          <span>
+                            {new Date(project.createdAt).toLocaleDateString()}{" "}
+                            {new Date(project.createdAt).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
+                          </span>
                         </div>
                         <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <ExternalLink className="w-5 h-5 text-blue-500" />
@@ -179,26 +208,41 @@ export default function ProjectsSection() {
                 className="p-6"
               >
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-3xl font-bold text-gray-800">{selectedProject.name}</h2>
-                  <div className={`${statusColors[selectedProject.status]} text-white px-3 py-1 rounded-full text-sm font-semibold`}>
+                  <h2 className="text-3xl font-bold text-gray-800">
+                    {selectedProject.name}
+                  </h2>
+                  <div
+                    className={`${statusColors[selectedProject.status]} text-white px-3 py-1 rounded-full text-sm font-semibold`}
+                  >
                     {selectedProject.status}
                   </div>
                 </div>
                 <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-                  {selectedProject.fullDescription || selectedProject.description}
+                  {selectedProject.fullDescription ||
+                    selectedProject.description}
                 </p>
                 <div className="grid grid-cols-2 gap-6 mb-8">
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-800 mb-2">Team Leader</h3>
-                    <p className="text-gray-600">{selectedProject.teamLead.name}</p>
+                    <h3 className="font-semibold text-gray-800 mb-2">
+                      Team Leader
+                    </h3>
+                    <p className="text-gray-600">
+                      {selectedProject.teamLead.name}
+                    </p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-800 mb-2">Created At</h3>
-                    <p className="text-gray-600">{new Date(selectedProject.createdAt).toLocaleDateString()}</p>
+                    <h3 className="font-semibold text-gray-800 mb-2">
+                      Created At
+                    </h3>
+                    <p className="text-gray-600">
+                      {new Date(selectedProject.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
                 <div className="mb-8">
-                  <h3 className="font-semibold text-gray-800 mb-4">Team Members</h3>
+                  <h3 className="font-semibold text-gray-800 mb-4">
+                    Team Members
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.teamMembers.map((member, index) => (
                       <div
@@ -215,14 +259,15 @@ export default function ProjectsSection() {
                   {selectedProject.teamLead.github && (
                     <Button
                       variant="outline"
-                      onClick={() => window.open(selectedProject.teamLead.github, "_blank")}
+                      onClick={() =>
+                        window.open(selectedProject.teamLead.github, "_blank")
+                      }
                       className="flex items-center space-x-2 bg-gray-800 text-white hover:bg-gray-700 hover:text-white transition-colors duration-200"
                     >
                       <Github className="h-5 w-5" />
                       <span>Team Lead GitHub</span>
                     </Button>
                   )}
-                  
                 </div>
               </motion.div>
             </DialogContent>
@@ -232,4 +277,3 @@ export default function ProjectsSection() {
     </motion.section>
   );
 }
-
