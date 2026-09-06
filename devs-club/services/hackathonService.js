@@ -116,9 +116,39 @@ const fetchDevfolioHackathons = async () => {
       title: hackathon.name,
       description: hackathon.desc || hackathon.tagline || 'No description available',
       organizer: hackathon.hosted_by || 'Unknown Organization',
-      startDate: new Date(hackathon.starts_at).toLocaleDateString(),
-      endDate: new Date(hackathon.ends_at).toLocaleDateString(),
-      registrationDeadline: new Date(hackathon.hackathon_setting?.reg_ends_at).toLocaleDateString(),
+      startDate: new Date(hackathon.start_date).toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+}) + " " + new Date(hackathon.start_date).toLocaleTimeString("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+}),
+
+endDate: new Date(hackathon.end_date).toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+}) + " " + new Date(hackathon.end_date).toLocaleTimeString("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+}),
+
+registrationDeadline: new Date(
+  hackathon.regnRequirements?.end_regn_dt
+).toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+}) + " " + new Date(
+  hackathon.regnRequirements?.end_regn_dt
+).toLocaleTimeString("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+}),
       remainingTime: getRemainingTime(hackathon.hackathon_setting?.reg_ends_at),
       teamSize: {
         min: 1,
